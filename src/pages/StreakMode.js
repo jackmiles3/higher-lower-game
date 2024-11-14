@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
-import { FaCog } from 'react-icons/fa';
+import { FaCog, FaHome } from 'react-icons/fa';
 
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
@@ -14,8 +14,9 @@ const StreakMode = () => {
   const [lastCard, setLastCard] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
   const [hardMode, setHardMode] = useState(false);
-  const [suitGuessing, setSuitGuessing] = useState(false); // For suit guessing phase
-  const [hiddenSuitCard, setHiddenSuitCard] = useState(null); // To hold the next card without suit during suit guessing
+  const [suitGuessing, setSuitGuessing] = useState(false); 
+  const [hiddenSuitCard, setHiddenSuitCard] = useState(null); 
+  const [showHomeConfirmation, setShowHomeConfirmation] = useState(false);
 
 
   useEffect(() => {
@@ -95,11 +96,33 @@ const StreakMode = () => {
     setGameOver(true);
   };
 
+  const handleHomeClick = () => {
+    if (streak > 0) {
+      setShowHomeConfirmation(true); 
+    } else {
+      navigateHome(); 
+    }
+  };
+  
+  const navigateHome = () => {
+    window.location.href = '/';
+  };
+
   return (
     <div className="min-h-screen bg-green-800 flex flex-col items-center text-white relative">
       <h2 className="text-3xl font-bold mt-8">Streak Mode</h2>
       <p className="text-lg mt-2">Current Streak: {streak}</p>
-
+  
+      {/* Home Button */}
+      <button
+        className="absolute top-4 left-4 flex items-center bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded space-x-2"
+        onClick={handleHomeClick}>
+        <span className="text-xl">
+          <FaHome />
+        </span>
+        <span>Home</span>
+      </button>
+  
       {/* Options Gear Icon */}
       <button
         className="absolute top-4 right-4 text-white text-2xl"
@@ -107,7 +130,7 @@ const StreakMode = () => {
       >
         <FaCog />
       </button>
-
+  
       {/* Options Panel */}
       {showOptions && (
         <div className="absolute top-16 right-4 bg-green-700 p-4 rounded shadow-lg">
@@ -123,14 +146,19 @@ const StreakMode = () => {
           </label>
         </div>
       )}
-
+  
       {currentCard && (suitGuessing ? hiddenSuitCard : nextCard) ? (
         <div className="mt-6">
           {gameOver ? (
             <div className="text-center">
-              <p className="text-xl mb-4">
-                Wrong! The next card was: {lastCard.value} of {lastCard.suit}
-              </p>
+              <div className="text-center">
+                <p className="text-xl mb-4">Wrong! The next card was:</p>
+                <img
+                  src={`https://deckofcardsapi.com/static/img/${lastCard.value === '10' ? '0' : lastCard.value}${lastCard.suit[0].toUpperCase()}.png`}
+                  alt={`${lastCard.value} of ${lastCard.suit}`}
+                  className="w-32 h-48 mx-auto mb-4"
+                />
+              </div>
               <button
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
                 onClick={startGame}
@@ -156,10 +184,17 @@ const StreakMode = () => {
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-xl mb-4">
-                Current Card: {currentCard.value} of {currentCard.suit}
-              </p>
-              <div className="space-x-4">
+              <p className="text-xl mb-4">Current Card:</p>
+              {currentCard ? (
+                <img
+                  src={`https://deckofcardsapi.com/static/img/${currentCard.value === '10' ? '0' : currentCard.value}${currentCard.suit[0].toUpperCase()}.png`}
+                  alt={`${currentCard.value} of ${currentCard.suit}`}
+                  className="w-32 h-48 mx-auto"
+                />
+              ) : (
+                <p>Loading card...</p>
+              )}
+              <div className="space-x-4 mt-4">
                 <button
                   className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
                   onClick={() => handleGuess('higher')}
@@ -179,24 +214,50 @@ const StreakMode = () => {
       ) : (
         <p className="mt-4">Loading...</p>
       )}
-
+  
       {/* History */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold">History</h3>
-        <ul className="mt-4 max-h-40 overflow-y-auto bg-green-700 p-4 rounded w-80">
-          {history.length > 0 ? (
-            history.map((card, index) => (
-              <li key={index} className="text-sm">
-                {card.value} of {card.suit}
-              </li>
-            ))
-          ) : (
-            <p className="text-sm text-gray-300">No history yet!</p>
-          )}
+        <ul className="mt-4 max-h-40 overflow-y-auto bg-green-700 p-4 rounded w-80 grid grid-cols-4 gap-2">
+          {history.map((card, index) => (
+            <li key={index} className="flex justify-center">
+              <img
+                src={`https://deckofcardsapi.com/static/img/${card.value === '10' ? '0' : card.value}${card.suit[0].toUpperCase()}.png`}
+                alt={`${card.value} of ${card.suit}`}
+                className="w-16 h-24"
+              />
+            </li>
+          ))}
         </ul>
       </div>
+  
+      {/* Confirmation Modal */}
+      {showHomeConfirmation && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-center">
+            <h2 className="text-xl font-bold text-white mb-4">Are you sure?</h2>
+            <p className="text-white mb-4">
+              You have a game in progress with a streak of {streak}. Are you sure you want to leave?
+            </p>
+            <div className="space-x-4">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                onClick={() => setShowHomeConfirmation(false)} // Close modal
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                onClick={navigateHome} // Confirm navigation
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  );  
 };
 
 export default StreakMode;
