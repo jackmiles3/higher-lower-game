@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
-import { FaCog, FaHome } from 'react-icons/fa';
+import { FaCog, FaHome, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
@@ -194,18 +194,18 @@ const StreakMode = () => {
               ) : (
                 <p>Loading card...</p>
               )}
-              <div className="space-x-4 mt-4">
+              <div className="flex justify-center space-x-4 mt-4">
                 <button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center"
                   onClick={() => handleGuess('higher')}
                 >
-                  Higher
+                  Higher <FaArrowUp className="ml-2" />
                 </button>
                 <button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center"
                   onClick={() => handleGuess('lower')}
                 >
-                  Lower
+                  Lower <FaArrowDown className="ml-2" />
                 </button>
               </div>
             </div>
@@ -218,19 +218,23 @@ const StreakMode = () => {
       {/* History */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold">History</h3>
-        <ul className="mt-4 max-h-40 overflow-y-auto bg-green-700 p-4 rounded w-80 grid grid-cols-4 gap-2">
-          {history.map((card, index) => (
-            <li key={index} className="flex justify-center">
-              <img
-                src={`https://deckofcardsapi.com/static/img/${card.value === '10' ? '0' : card.value}${card.suit[0].toUpperCase()}.png`}
-                alt={`${card.value} of ${card.suit}`}
-                className="w-16 h-24"
-              />
-            </li>
-          ))}
+        <ul className="mt-4 bg-green-700 p-4 rounded w-80 flex flex-wrap gap-2">
+          {history.length > 0 ? (
+            history.map((card, index) => (
+              <li key={index} className="flex">
+                <img
+                  src={`https://deckofcardsapi.com/static/img/${card.value === '10' ? '0' : card.value}${card.suit[0].toUpperCase()}.png`}
+                  alt={`${card.value} of ${card.suit}`}
+                  className="w-16 h-24"
+                />
+              </li>
+            ))
+          ) : (
+            <p className="text-sm text-gray-300">No history yet!</p>
+          )}
         </ul>
       </div>
-  
+
       {/* Confirmation Modal */}
       {showHomeConfirmation && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
