@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
 import { FaCog, FaHome, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
+import '../styles.css'
+
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
 const StreakMode = () => {
@@ -17,6 +19,8 @@ const StreakMode = () => {
   const [suitGuessing, setSuitGuessing] = useState(false); 
   const [hiddenSuitCard, setHiddenSuitCard] = useState(null); 
   const [showHomeConfirmation, setShowHomeConfirmation] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false); 
+  const [showNextCard, setShowNextCard] = useState(false); 
 
 
   useEffect(() => {
@@ -33,6 +37,8 @@ const StreakMode = () => {
     setGameOver(false);
     setSuitGuessing(false);
     setHiddenSuitCard(null);
+    setIsFlipping(false);
+    setShowNextCard(false);
   };
 
   const isGuessCorrect = (guess) => {
@@ -53,21 +59,38 @@ const StreakMode = () => {
 
   const handleGuess = (guess) => {
     if (isGuessCorrect(guess)) {
-      setHistory([...history, currentCard]); // Add current card to history
+      setIsFlipping(true);
   
-      if (currentCard.value === nextCard.value && hardMode) {
-        // Trigger suit guessing if the ranks match in Hard Mode
-        setSuitGuessing(true);
-        setHiddenSuitCard({ value: nextCard.value, suit: '?' }); // Show rank without suit
-        return;
-      }
+      setTimeout(() => {
+        setShowNextCard(true); 
+      }, 300); 
   
-      incrementStreakAndAdvance(); // Normal flow for non-matching ranks
+      setTimeout(() => {
+        setHistory([...history, currentCard]); 
+  
+        if (currentCard.value === nextCard.value && hardMode) {
+          setSuitGuessing(true);
+          setHiddenSuitCard({ value: nextCard.value, suit: '?' });
+        } else {
+          incrementStreakAndAdvance(); 
+        }
+  
+        setIsFlipping(false); 
+        setShowNextCard(false); // Only hide the back-facing card for continuing game
+      }, 1200);
     } else {
-      endGame();
+      setIsFlipping(true);  
+      
+      setTimeout(() => {
+        setShowNextCard(true);  // Reveal next card on wrong guess
+      }, 300); 
+  
+      setTimeout(() => {
+        endGame();  // Proceed to end game after revealing the card
+      }, 1200); 
     }
   };
-
+  
   const handleSuitGuess = (suit) => {
     if (suit === nextCard.suit) {
       setSuitGuessing(false); // Exit suit guessing phase
@@ -93,9 +116,14 @@ const StreakMode = () => {
 
   const endGame = () => {
     setLastCard(nextCard);
-    setGameOver(true);
+    setIsFlipping(true); // Keep flipping effect consistent
+    setShowNextCard(true); // Ensure revealed card remains visible
+    setTimeout(() => {
+      setGameOver(true); // Trigger game over UI after flip completes
+      setIsFlipping(false); // Ensure flipping stops
+    }, 600); // Match flip animation duration
   };
-
+  
   const handleHomeClick = () => {
     if (streak > 0) {
       setShowHomeConfirmation(true); 
@@ -150,22 +178,42 @@ const StreakMode = () => {
       {currentCard && (suitGuessing ? hiddenSuitCard : nextCard) ? (
         <div className="mt-6">
           {gameOver ? (
-            <div className="text-center">
+             <div className="text-center">
               <div className="text-center">
                 <p className="text-xl mb-4">Wrong! The next card was:</p>
-                <img
-                  src={`https://deckofcardsapi.com/static/img/${lastCard.value === '10' ? '0' : lastCard.value}${lastCard.suit[0].toUpperCase()}.png`}
-                  alt={`${lastCard.value} of ${lastCard.suit}`}
-                  className="w-32 h-48 mx-auto mb-4"
-                />
+                <div className="flex justify-center items-center space-x-8">
+                  {/* Current Card */}
+                  <img
+                    src={`https://deckofcardsapi.com/static/img/${currentCard.value === '10' ? '0' : currentCard.value}${currentCard.suit[0].toUpperCase()}.png`}
+                    alt={`${currentCard.value} of ${currentCard.suit}`}
+                    className="w-32 h-48"
+                  />
+          
+                  {/* Flipping Last Card */}
+                  <div className="relative w-32 h-48">
+                    {/* Front Face (Revealed Last Card) */}
+                    <img
+                      src={`https://deckofcardsapi.com/static/img/${lastCard.value === '10' ? '0' : lastCard.value}${lastCard.suit[0].toUpperCase()}.png`}
+                      alt={`${lastCard.value} of ${lastCard.suit}`}
+                      className={`absolute w-32 h-48 front-face ${showNextCard ? 'flip' : ''}`}
+                    />
+          
+                    {/* Back Face (Face-Down Card) */}
+                    <img
+                      src="https://deckofcardsapi.com/static/img/back.png"
+                      alt="Next Card (Back)"
+                      className={`absolute w-32 h-48 back-face ${!showNextCard ? 'flip' : ''}`}
+                    />
+                  </div>
+                </div>
               </div>
               <button
-                className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
+                className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded mt-4"
                 onClick={startGame}
               >
                 Play Again
               </button>
-            </div>
+           </div>
           ) : suitGuessing ? (
             <div className="text-center">
               <p className="text-xl mb-4">Guess the suit of the next card!</p>
@@ -185,24 +233,48 @@ const StreakMode = () => {
           ) : (
             <div className="text-center">
               <p className="text-xl mb-4">Current Card:</p>
-              {currentCard ? (
-                <img
-                  src={`https://deckofcardsapi.com/static/img/${currentCard.value === '10' ? '0' : currentCard.value}${currentCard.suit[0].toUpperCase()}.png`}
-                  alt={`${currentCard.value} of ${currentCard.suit}`}
-                  className="w-32 h-48 mx-auto"
-                />
-              ) : (
-                <p>Loading card...</p>
-              )}
+              <div className="flex justify-center items-center space-x-8">
+                {/* Current Card */}
+                {currentCard ? (
+                  <img
+                    src={`https://deckofcardsapi.com/static/img/${currentCard.value === '10' ? '0' : currentCard.value}${currentCard.suit[0].toUpperCase()}.png`}
+                    alt={`${currentCard.value} of ${currentCard.suit}`}
+                    className="w-32 h-48"
+                  />
+                ) : (
+                  <p>Loading card...</p>
+                )}
+
+                {/* Flipping Next Card */}
+                <div className={`relative w-32 h-48 ${isFlipping ? 'flip' : ''}`}>
+                  {/* Front Face (Revealed Next Card) */}
+                  {showNextCard ? (
+                    <img
+                      src={`https://deckofcardsapi.com/static/img/${nextCard.value === '10' ? '0' : nextCard.value}${nextCard.suit[0].toUpperCase()}.png`}
+                      alt={`${nextCard.value} of ${nextCard.suit}`}
+                      className="absolute w-32 h-48 front-face"
+                    />
+                  ) : (
+                    /* Back Face (Face-Down Card) */
+                    <img
+                      src="https://deckofcardsapi.com/static/img/back.png"
+                      alt="Next Card (Back)"
+                      className="absolute w-32 h-48 back-face"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Buttons */}
               <div className="flex justify-center space-x-4 mt-4">
                 <button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center transform active:scale-90 transition-transform duration-100"
                   onClick={() => handleGuess('higher')}
                 >
                   Higher <FaArrowUp className="ml-2" />
                 </button>
                 <button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center transform active:scale-90 transition-transform duration-100"
                   onClick={() => handleGuess('lower')}
                 >
                   Lower <FaArrowDown className="ml-2" />

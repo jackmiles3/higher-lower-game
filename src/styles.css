@@ -1,0 +1,27 @@
+.relative {
+    perspective: 1000px;
+  }
+  
+.flip .front-face {
+    transform: rotateY(0deg);
+}
+  
+.flip .back-face {
+    transform: rotateY(180deg);
+}
+  
+.front-face,
+.back-face {
+    transition: transform 0.6s ease-in-out;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+  
+.back-face {
+    transform: rotateY(0deg);
+}
+  
+.front-face {
+    transform: rotateY(-180deg);
+}
+  
