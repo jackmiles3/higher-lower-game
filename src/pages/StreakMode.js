@@ -23,11 +23,16 @@ const StreakMode = () => {
   const [showNextCard, setShowNextCard] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
 
-  
-
-
   useEffect(() => {
     startGame();
+    const stats = localStorage.getItem('gameStats');
+    if (!stats) {
+      const initialStats = {
+        easyMode: { highestStreak: 0, totalGames: 0, streakSum: 0 },
+        hardMode: { highestStreak: 0, totalGames: 0, streakSum: 0 }
+      };
+      localStorage.setItem('gameStats', JSON.stringify(initialStats));
+    }
   }, []);
 
   const startGame = () => {
@@ -42,6 +47,37 @@ const StreakMode = () => {
     setHiddenSuitCard(null);
     setIsFlipping(false);
     setShowNextCard(false);
+  };
+
+  const updateStatistics = (streak) => {
+    const mode = hardMode ? 'hardMode' : 'easyMode';
+    const stats = JSON.parse(localStorage.getItem('gameStats'));
+  
+    const currentStats = stats[mode];
+    currentStats.totalGames += 1;
+    currentStats.streakSum += streak;
+    if (streak > currentStats.highestStreak) {
+      currentStats.highestStreak = streak;
+    }
+  
+    stats[mode] = currentStats;
+    localStorage.setItem('gameStats', JSON.stringify(stats));
+  };
+
+  const getStatistics = (isHardMode = hardMode) => {
+    const stats = JSON.parse(localStorage.getItem('gameStats'));
+    const modeStats = isHardMode ? stats.hardMode : stats.easyMode;
+  
+    const averageStreak =
+      modeStats.totalGames > 0
+        ? (modeStats.streakSum / modeStats.totalGames).toFixed(2)
+        : 0;
+  
+    return {
+      highestStreak: modeStats.highestStreak,
+      totalGames: modeStats.totalGames,
+      averageStreak
+    };
   };
 
   const isGuessCorrect = (guess) => {
@@ -120,6 +156,7 @@ const StreakMode = () => {
   const endGame = () => {
     setLastCard(nextCard);
     setGameOver(true);
+    updateStatistics(streak);
   };
   
   const handleHomeClick = () => {
@@ -194,15 +231,24 @@ const StreakMode = () => {
           <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96">
             <h2 className="text-2xl font-bold text-center mb-4">Statistics</h2>
 
-            <h3 className="text-xl font-semibold mt-4">Easy Mode</h3>
-            <p>Highest Streak: <span className="text-yellow-400">Placeholder</span></p>
-            <p>Average Streak: <span className="text-yellow-400">Placeholder</span></p>
-            <p>Total Games Played: <span className="text-yellow-400">Placeholder</span></p>
+             {/* Fetch statistics dynamically */}
+            {(() => {
+              const easyStats = getStatistics(false);
+              const hardStats = getStatistics(true);
+              return (
+                <>
+                  <h3 className="text-xl font-semibold mt-4">Easy Mode</h3>
+                  <p>Highest Streak: <span className="text-yellow-400">{easyStats.highestStreak}</span></p>
+                  <p>Average Streak: <span className="text-yellow-400">{easyStats.averageStreak}</span></p>
+                  <p>Total Games Played: <span className="text-yellow-400">{easyStats.totalGames}</span></p>
 
-            <h3 className="text-xl font-semibold mt-6">Hard Mode</h3>
-            <p>Highest Streak: <span className="text-yellow-400">Placeholder</span></p>
-            <p>Average Streak: <span className="text-yellow-400">Placeholder</span></p>
-            <p>Total Games Played: <span className="text-yellow-400">Placeholder</span></p>
+                  <h3 className="text-xl font-semibold mt-6">Hard Mode</h3>
+                  <p>Highest Streak: <span className="text-yellow-400">{hardStats.highestStreak}</span></p>
+                  <p>Average Streak: <span className="text-yellow-400">{hardStats.averageStreak}</span></p>
+                  <p>Total Games Played: <span className="text-yellow-400">{hardStats.totalGames}</span></p>
+                </>
+              );
+            })()}
 
             <button
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-6 w-full"
