@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
-import { FaCog, FaHome, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaCog, FaHome, FaArrowUp, FaArrowDown, FaChartBar } from 'react-icons/fa';
 
 import '../styles.css'
 
@@ -21,6 +21,9 @@ const StreakMode = () => {
   const [showHomeConfirmation, setShowHomeConfirmation] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false); 
   const [showNextCard, setShowNextCard] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
+
+  
 
 
   useEffect(() => {
@@ -159,14 +162,55 @@ const StreakMode = () => {
         <div className="absolute top-16 right-4 bg-green-700 p-4 rounded shadow-lg">
           <h3 className="text-lg font-bold mb-2">Options</h3>
           <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={hardMode}
-              onChange={() => setHardMode(!hardMode)}
-              className="form-checkbox h-5 w-5 text-yellow-500"
-            />
             <span>Hard Mode</span>
+            <div 
+              className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${
+                hardMode ? 'bg-yellow-500' : 'bg-gray-300'
+              }`} 
+              onClick={() => setHardMode(!hardMode)}
+            >
+              <span
+                className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform ${
+                  hardMode ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </div>
           </label>
+          <button
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded mt-4 w-full flex items-center justify-center space-x-2"
+            onClick={() => setShowStatistics(true)}
+          >
+            <span>
+              <FaChartBar />
+            </span>
+            <span>Statistics</span>
+          </button>
+        </div>
+      )}
+
+      {/* Statistics Overlay */}
+      {showStatistics && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96">
+            <h2 className="text-2xl font-bold text-center mb-4">Statistics</h2>
+
+            <h3 className="text-xl font-semibold mt-4">Easy Mode</h3>
+            <p>Highest Streak: <span className="text-yellow-400">Placeholder</span></p>
+            <p>Average Streak: <span className="text-yellow-400">Placeholder</span></p>
+            <p>Total Games Played: <span className="text-yellow-400">Placeholder</span></p>
+
+            <h3 className="text-xl font-semibold mt-6">Hard Mode</h3>
+            <p>Highest Streak: <span className="text-yellow-400">Placeholder</span></p>
+            <p>Average Streak: <span className="text-yellow-400">Placeholder</span></p>
+            <p>Total Games Played: <span className="text-yellow-400">Placeholder</span></p>
+
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-6 w-full"
+              onClick={() => setShowStatistics(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
   
