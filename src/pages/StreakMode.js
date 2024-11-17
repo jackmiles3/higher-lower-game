@@ -227,8 +227,8 @@ const StreakMode = () => {
 
       {/* Statistics Overlay */}
       {showStatistics && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96">
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96 relative">
             <h2 className="text-2xl font-bold text-center mb-4">Statistics</h2>
 
              {/* Fetch statistics dynamically */}
