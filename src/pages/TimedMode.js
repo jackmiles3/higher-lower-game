@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
 import { FaHome, FaArrowUp, FaArrowDown, FaCog } from 'react-icons/fa';
 
+import '../styles.css'
+
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
 const TimedMode = () => {
@@ -17,6 +19,8 @@ const TimedMode = () => {
   const [hiddenSuitCard, setHiddenSuitCard] = useState(null);
   const [showPenalty, setShowPenalty] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [showNextCard, setShowNextCard] = useState(false);
 
   useEffect(() => {
     initializeDeck();
@@ -47,21 +51,31 @@ const TimedMode = () => {
     setShowPenalty(false);
   };
 
+
   const handleGuess = (guess) => {
     if (!gameActive || suitGuessing) return;
 
     if (isGuessCorrect(guess)) {
-      setHistory([...history, currentCard]);
-
-
-      if (hardMode && currentCard.value === nextCard.value) {
-        // Trigger suit guessing if ranks match
-        setSuitGuessing(true);
-        setHiddenSuitCard({ value: nextCard.value, suit: '?' });
-      } else {
-        advanceGame();
-        setShowPenalty(false);
-      }
+      setIsFlipping(true);
+  
+      setTimeout(() => {
+        setShowNextCard(true); // Flip to reveal next card
+      }, 300);
+  
+      setTimeout(() => {
+        setHistory([...history, currentCard]);
+  
+        if (currentCard.value === nextCard.value && hardMode) {
+          setSuitGuessing(true);
+          setHiddenSuitCard({ value: nextCard.value, suit: '?' });
+        } else {
+          advanceGame();
+          setShowPenalty(false);
+        }
+  
+        setIsFlipping(false);
+        setShowNextCard(false); 
+      }, 1200);
     } else {
       applyTimePenalty();
     }
@@ -161,11 +175,23 @@ const TimedMode = () => {
                 className="w-32 h-48"
               />
             )}
-            <img
-              src="https://deckofcardsapi.com/static/img/back.png"
-              alt="Next Card (Back)"
-              className="w-32 h-48"
-            />
+
+            {/* Flipping Card for Next */}
+            <div className={`relative w-32 h-48 ${isFlipping ? 'flip' : ''}`}>
+              {showNextCard ? (
+                <img
+                  src={`https://deckofcardsapi.com/static/img/${nextCard.value === '10' ? '0' : nextCard.value}${nextCard.suit[0].toUpperCase()}.png`}
+                  alt={`${nextCard.value} of ${nextCard.suit}`}
+                  className="absolute w-32 h-48 front-face"
+                />
+              ) : (
+                <img
+                  src="https://deckofcardsapi.com/static/img/back.png"
+                  alt="Next Card (Back)"
+                  className="absolute w-32 h-48 back-face"
+                />
+              )}
+            </div>
           </div>
 
           <div className="flex justify-center space-x-4 mt-4">
