@@ -24,4 +24,20 @@
 .front-face {
     transform: rotateY(-180deg);
 }
+
+@keyframes slideFromTop {
+    0% {
+      transform: translateY(-600%); /* Start above the viewport */
+    }
+    50% {
+      transform: translateY(50%); /* Midway, still sliding */
+    }
+    100% {
+      transform: translateY(0); /* End at the center */
+    }
+  }
+  
+  .animate-slideFromTop {
+    animation: slideFromTop 2s ease-out forwards; /* Forward ensures it stays in the center after sliding */
+  }
   

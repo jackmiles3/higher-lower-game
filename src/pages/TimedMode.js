@@ -21,6 +21,7 @@ const TimedMode = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
   const [showNextCard, setShowNextCard] = useState(false);
+  const [showTimeUp, setShowTimeUp] = useState(false);
 
   useEffect(() => {
     initializeDeck();
@@ -49,6 +50,7 @@ const TimedMode = () => {
     setSuitGuessing(false);
     setHiddenSuitCard(null);
     setShowPenalty(false);
+    setShowTimeUp(false);
   };
 
 
@@ -120,14 +122,29 @@ const TimedMode = () => {
   const endGame = () => {
     setGameActive(false);
     setShowPenalty(false);
-    alert('Time’s up!');
+    setShowTimeUp(true);
+  
+    setTimeout(() => {
+      setShowTimeUp(false);
+      // Game remains inactive, but user can start a new game or continue
+    }, 3000); // "Time's Up!" displayed for 3 seconds
   };
+  
 
   return (
     <div className="min-h-screen bg-green-800 flex flex-col items-center text-white relative">
       <h2 className="text-3xl font-bold mt-8">Timed Mode</h2>
 
-      {!gameActive && (
+       {/* Time's Up Message */}
+       {showTimeUp && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-red-500 text-8xl font-bold opacity-80 animate-slideFromTop">
+            Time's Up!
+          </p>
+        </div>
+      )}
+
+      {!gameActive && !showTimeUp && (
         <div className="text-center">
           <p className="text-lg mb-4">Select your time limit:</p>
           <div className="flex justify-center space-x-4">
@@ -144,10 +161,12 @@ const TimedMode = () => {
         </div>
       )}
 
-      <div className="text-xl mt-4 flex items-center space-x-2">
-        <p>Time Left: {timeLeft} seconds</p>
-        {showPenalty && <p className="text-red-500">-5 seconds</p>}
-      </div>
+      {gameActive && (
+        <div className="text-xl mt-4 flex items-center space-x-2">
+          <p>Time Left: {timeLeft} seconds</p>
+          {showPenalty && <p className="text-red-500">-5 seconds</p>}
+        </div>
+      )}
 
       {suitGuessing ? (
         <div className="text-center">
