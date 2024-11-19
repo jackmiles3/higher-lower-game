@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# 🃏 Higher/Lower Card Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the **Higher/Lower Card Game**, a simple yet engaging card game where players guess whether the next card will be higher or lower than the current one. This project offers two different modes of play and tracks individual statistics for each mode.
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+### 🎮 Game Modes
+1. **Streak Mode**
+   Try to build the longest streak of correct guesses without making a mistake.  
 
-### `npm start`
+2. **Timed Mode**
+   Choose a time limit (30, 60, or 120 seconds) and try to achieve the highest score by making as many correct guesses as possible within the set time.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 📈 Difficulty Levels
+- **Normal Mode**
+  If the next card is of the same rank as the current card, progression is automatic.
+  
+- **Hard Mode**
+  If the next card is of the same rank, you’ll need to guess its suit correctly to progress.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 📊 Statistics
+Track your progress across both game modes and difficulty levels. View your:
+- **Highest Score/Streak**  
+- **Average Score/Streak**  
+- **Total Games Played**  
 
-### `npm run build`
+Statistics are stored locally per user.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🖥️ Interactive UI
+- **Instructions Panel**  
+  Easily accessible from the home page via the top-right button, providing gameplay details.  
+- **Settings Menu**  
+  Adjust game difficulty and view your statistics via the gear icon on each game page.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🛠️ Technologies Used
+- **React**: Core framework for building the app.
+- **Tailwind CSS**: A utility-first CSS framework used for designing the UI.
+- **Vercel**: For hosting the live version of the game.
+- **Icons**: Leveraged  ```react-icons``` for intuitive UI.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🔧 Installation and Setup
 
-### `npm run eject`
+### ⚙️ Local Development
+1. Clone the repository:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+git clone https://github.com/yourusername/higher-lower-card-game.git
+cd higher-lower-card-game
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Install dependencies:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. Start the development server:
 
-## Learn More
+```bash
+npm start
+```
+The app will run at ```http://localhost:3000```.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 🚀 Live Deployment
+The app is live and hosted on Vercel. You can play it [here](https://higher-lower-game-iota.vercel.app/).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🔮 Future Improvements/Additions
+- **Multiplayer Mode**: Compete with friends in real-time.
+- **Global Leaderboard**: Compare your stats with others.
+- **Custome Themes**: Personalize the game's appearance.
