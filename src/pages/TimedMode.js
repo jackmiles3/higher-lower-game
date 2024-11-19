@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createDeck } from '../utils/deck';
-import { FaHome, FaArrowUp, FaArrowDown, FaCog } from 'react-icons/fa';
+import { FaHome, FaArrowUp, FaArrowDown, FaCog, FaChartBar } from 'react-icons/fa';
 
 import '../styles.css'
 
@@ -12,8 +12,10 @@ const TimedMode = () => {
   const [deck, setDeck] = useState([]);
   const [history, setHistory] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLimit, setTimeLimit] = useState(null);
   const timePenalty = 5;
   const [gameActive, setGameActive] = useState(false);
+  const [score, setScore] = useState(0);
   const [hardMode, setHardMode] = useState(false);
   const [suitGuessing, setSuitGuessing] = useState(false);
   const [hiddenSuitCard, setHiddenSuitCard] = useState(null);
@@ -22,9 +24,30 @@ const TimedMode = () => {
   const [isFlipping, setIsFlipping] = useState(false);
   const [showNextCard, setShowNextCard] = useState(false);
   const [showTimeUp, setShowTimeUp] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
+
 
   useEffect(() => {
     initializeDeck();
+    
+    const timedStats = localStorage.getItem('timedGameStats');
+    if (!timedStats) {
+      const initialTimedStats = {
+       '30': {
+          easyMode: { highestScore: 0, totalGames: 0, scoreSum: 0 },
+          hardMode: { highestScore: 0, totalGames: 0, scoreSum: 0 }
+        },
+        '60': {
+          easyMode: { highestScore: 0, totalGames: 0, scoreSum: 0 },
+          hardMode: { highestScore: 0, totalGames: 0, scoreSum: 0 }
+        },
+        '120': {
+          easyMode: { highestScore: 0, totalGames: 0, scoreSum: 0 },
+          hardMode: { highestScore: 0, totalGames: 0, scoreSum: 0 }
+        }
+      };
+      localStorage.setItem('timedGameStats', JSON.stringify(initialTimedStats));
+    }
   }, []);
 
   useEffect(() => {
@@ -34,6 +57,7 @@ const TimedMode = () => {
     } else if (timeLeft <= 0 && gameActive) {
       endGame();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, gameActive]);
 
   const initializeDeck = () => {
@@ -46,11 +70,45 @@ const TimedMode = () => {
   const startGame = (timeLimit) => {
     setHistory([]);
     setTimeLeft(timeLimit);
+    setTimeLimit(timeLimit);    
+    setScore(0);
     setGameActive(true);
     setSuitGuessing(false);
     setHiddenSuitCard(null);
     setShowPenalty(false);
     setShowTimeUp(false);
+  };
+
+  const updateStatistics = (finalScore) => {
+    const mode = hardMode ? 'hardMode' : 'easyMode';
+    const stats = JSON.parse(localStorage.getItem('timedGameStats'));
+
+    const currentStats = stats[timeLimit][mode];
+    currentStats.totalGames += 1;
+    currentStats.scoreSum += finalScore;
+
+    if (finalScore > currentStats.highestScore) {
+      currentStats.highestScore = finalScore;
+    }
+
+    stats[timeLimit][mode] = currentStats;
+    localStorage.setItem('timedGameStats', JSON.stringify(stats));
+  };
+
+  const getStatistics = (timeLimit, isHardMode = hardMode) => {
+    const stats = JSON.parse(localStorage.getItem('timedGameStats'));
+    const modeStats = isHardMode ? stats[timeLimit].hardMode : stats[timeLimit].easyMode;
+
+    const averageScore =
+      modeStats.totalGames > 0
+        ? (modeStats.scoreSum / modeStats.totalGames).toFixed(2)
+        : 0;
+
+    return {
+      highestScore: modeStats.highestScore,
+      totalGames: modeStats.totalGames,
+      averageScore
+    };
   };
 
 
@@ -71,6 +129,7 @@ const TimedMode = () => {
           setSuitGuessing(true);
           setHiddenSuitCard({ value: nextCard.value, suit: '?' });
         } else {
+          setScore((prevScore) => prevScore + 1);
           advanceGame();
           setShowPenalty(false);
         }
@@ -85,6 +144,7 @@ const TimedMode = () => {
 
   const handleSuitGuess = (suit) => {
     if (suit === nextCard.suit) {
+      setScore((prevScore) => prevScore + 1);
       setSuitGuessing(false);
       advanceGame(); // Correct suit guess continues the game
     } else {
@@ -123,6 +183,8 @@ const TimedMode = () => {
     setGameActive(false);
     setShowPenalty(false);
     setShowTimeUp(true);
+
+    updateStatistics(score);
   
     setTimeout(() => {
       setShowTimeUp(false);
@@ -162,9 +224,12 @@ const TimedMode = () => {
       )}
 
       {gameActive && (
-        <div className="text-xl mt-4 flex items-center space-x-2">
-          <p>Time Left: {timeLeft} seconds</p>
-          {showPenalty && <p className="text-red-500">-5 seconds</p>}
+        <div className="text-center mt-4">
+          <div className="text-xl flex items-center justify-center space-x-2">
+            <p>Time Left: {timeLeft} seconds</p>
+            {showPenalty && <p className="text-red-500">-5 seconds</p>}
+          </div>
+          <p className="text-xl mt-2">Score: {score}</p>
         </div>
       )}
 
@@ -274,6 +339,52 @@ const TimedMode = () => {
               />
             </div>
           </label>
+          <button
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded mt-4 w-full flex items-center justify-center space-x-2"
+            onClick={() => setShowStatistics(true)}
+          >
+            <span>
+              <FaChartBar />
+            </span>
+            <span>Statistics</span>
+          </button>
+        </div>
+      )}
+
+      {/* Statistics Overlay */}
+      {showStatistics && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96 relative">
+            <h2 className="text-2xl font-bold text-center mb-4">Statistics</h2>
+
+            {[30, 60, 120].map((timeLimit) => {
+              const easyStats = getStatistics(timeLimit, false);
+              const hardStats = getStatistics(timeLimit, true);
+
+              return (
+                <div key={timeLimit} className="mb-6">
+                  <h3 className="text-xl font-semibold mt-4">{timeLimit}-Second Mode</h3>
+
+                  <h4 className="text-lg font-semibold mt-4">Easy Mode</h4>
+                  <p>Highest Score: <span className="text-yellow-400">{easyStats.highestScore}</span></p>
+                  <p>Average Score: <span className="text-yellow-400">{easyStats.averageScore}</span></p>
+                  <p>Total Games Played: <span className="text-yellow-400">{easyStats.totalGames}</span></p>
+
+                  <h4 className="text-lg font-semibold mt-4">Hard Mode</h4>
+                  <p>Highest Score: <span className="text-yellow-400">{hardStats.highestScore}</span></p>
+                  <p>Average Score: <span className="text-yellow-400">{hardStats.averageScore}</span></p>
+                  <p>Total Games Played: <span className="text-yellow-400">{hardStats.totalGames}</span></p>
+                </div>
+              );
+            })}
+
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-6 w-full"
+              onClick={() => setShowStatistics(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
 
