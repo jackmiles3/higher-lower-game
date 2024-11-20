@@ -87,10 +87,10 @@ const StreakMode = () => {
 
     if (currentIndex === nextIndex) {
       if (hardMode) {
-        setSuitGuessing(true); // Trigger suit guessing phase
-        setHiddenSuitCard({ value: nextCard.value, suit: '?' }); // Display rank without suit
+        setSuitGuessing(true);
+        setHiddenSuitCard({ value: nextCard.value, suit: '?' }); 
       }
-      return true; // Progress to suit guessing or continue in Easy Mode
+      return true; 
     }
 
     return guess === 'higher' ? nextIndex > currentIndex : nextIndex < currentIndex;
@@ -101,7 +101,7 @@ const StreakMode = () => {
       setIsFlipping(true);
   
       setTimeout(() => {
-        setShowNextCard(true); // Flip to reveal next card
+        setShowNextCard(true); 
       }, 300);
   
       setTimeout(() => {
@@ -115,24 +115,24 @@ const StreakMode = () => {
         }
   
         setIsFlipping(false);
-        setShowNextCard(false); // Reset for the next round
+        setShowNextCard(false); 
       }, 1200);
     } else {
       setIsFlipping(true);
   
       setTimeout(() => {
-        setShowNextCard(true); // Flip to reveal the wrong answer
+        setShowNextCard(true); 
       }, 300);
   
       setTimeout(() => {
-        endGame(); // Handle the game-over scenario
+        endGame(); 
       }, 1200);
     }
   };
   
   const handleSuitGuess = (suit) => {
     if (suit === nextCard.suit) {
-      setSuitGuessing(false); // Exit suit guessing phase
+      setSuitGuessing(false); 
       incrementStreakAndAdvance();
     } else {
       endGame();
@@ -231,7 +231,6 @@ const StreakMode = () => {
           <div className="bg-green-700 p-6 rounded shadow-lg text-white w-96 relative">
             <h2 className="text-2xl font-bold text-center mb-4">Statistics</h2>
 
-             {/* Fetch statistics dynamically */}
             {(() => {
               const easyStats = getStatistics(false);
               const hardStats = getStatistics(true);
@@ -383,13 +382,13 @@ const StreakMode = () => {
             <div className="space-x-4">
               <button
                 className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                onClick={() => setShowHomeConfirmation(false)} // Close modal
+                onClick={() => setShowHomeConfirmation(false)}
               >
                 Cancel
               </button>
               <button
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                onClick={navigateHome} // Confirm navigation
+                onClick={navigateHome} 
               >
                 Confirm
               </button>

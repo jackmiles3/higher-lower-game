@@ -2,25 +2,28 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaQuestionCircle, FaClock, FaChartLine } from 'react-icons/fa'; // Importing suitable icons
 
+import '../styles.css'
+
 const Home = () => {
   const [showInstructions, setShowInstructions] = useState(false);
 
   return (
     <div className="min-h-screen bg-green-800 flex items-center justify-center text-white relative">
       <div className="text-center">
+
         <h1 className="text-4xl font-bold mb-4">Higher/Lower Card Game</h1>
         <h2 className="text-xl font-semibold mb-8">by Jack Miles</h2>
         <p className="mb-6">Choose a game mode to start playing:</p>
         <div className="flex justify-center space-x-4">
           <Link to="/streak">
             <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded flex items-center space-x-2">
-              <FaChartLine /> {/* Icon for Streak Mode */}
+              <FaChartLine /> 
               <span>Streak Mode</span>
             </button>
           </Link>
           <Link to="/timed">
             <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded flex items-center space-x-2">
-              <FaClock /> {/* Icon for Timed Mode */}
+              <FaClock /> 
               <span>Timed Mode</span>
             </button>
           </Link>
@@ -32,7 +35,7 @@ const Home = () => {
         className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded flex items-center space-x-2"
         onClick={() => setShowInstructions(true)}
       >
-        <FaQuestionCircle /> {/* Question mark icon for instructions */}
+        <FaQuestionCircle /> 
         <span>Instructions</span>
       </button>
 

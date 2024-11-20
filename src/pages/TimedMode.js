@@ -25,6 +25,8 @@ const TimedMode = () => {
   const [showNextCard, setShowNextCard] = useState(false);
   const [showTimeUp, setShowTimeUp] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showHomeConfirmation, setShowHomeConfirmation] = useState(false);
+
 
 
   useEffect(() => {
@@ -119,7 +121,7 @@ const TimedMode = () => {
       setIsFlipping(true);
   
       setTimeout(() => {
-        setShowNextCard(true); // Flip to reveal next card
+        setShowNextCard(true); 
       }, 300);
   
       setTimeout(() => {
@@ -146,9 +148,9 @@ const TimedMode = () => {
     if (suit === nextCard.suit) {
       setScore((prevScore) => prevScore + 1);
       setSuitGuessing(false);
-      advanceGame(); // Correct suit guess continues the game
+      advanceGame(); 
     } else {
-      applyTimePenalty(); // Wrong guess applies time penalty
+      applyTimePenalty(); 
     }
   };
 
@@ -164,10 +166,10 @@ const TimedMode = () => {
 
     if (currentIndex === nextIndex) {
       if (hardMode) {
-        setSuitGuessing(true); // Trigger suit guessing phase
-        setHiddenSuitCard({ value: nextCard.value, suit: '?' }); // Display rank without suit
+        setSuitGuessing(true); 
+        setHiddenSuitCard({ value: nextCard.value, suit: '?' });
       }
-      return true; // Progress to suit guessing or continue in Easy Mode
+      return true; 
     }
 
     return guess === 'higher' ? nextIndex > currentIndex : nextIndex < currentIndex;
@@ -188,8 +190,19 @@ const TimedMode = () => {
   
     setTimeout(() => {
       setShowTimeUp(false);
-      // Game remains inactive, but user can start a new game or continue
-    }, 3000); // "Time's Up!" displayed for 3 seconds
+    }, 3000); 
+  };
+
+  const handleHomeClick = () => {
+    if (timeLeft > 0) {
+      setShowHomeConfirmation(true); 
+    } else {
+      navigateHome(); 
+    }
+  };
+  
+  const navigateHome = () => {
+    window.location.href = '/';
   };
   
 
@@ -390,13 +403,37 @@ const TimedMode = () => {
 
       <button
         className="absolute top-4 left-4 flex items-center bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded space-x-2"
-        onClick={() => window.location.href = '/'}
-      >
+        onClick={handleHomeClick}>
         <span className="text-xl">
           <FaHome />
         </span>
         <span>Home</span>
       </button>
+
+      {showHomeConfirmation && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-center">
+            <h2 className="text-xl font-bold text-white mb-4">Are you sure?</h2>
+            <p className="text-white mb-4">
+              You have a game in progress. Are you sure you want to leave?
+            </p>
+            <div className="space-x-4">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                onClick={() => setShowHomeConfirmation(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                onClick={navigateHome} 
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

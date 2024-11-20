@@ -27,17 +27,16 @@
 
 @keyframes slideFromTop {
     0% {
-      transform: translateY(-600%); /* Start above the viewport */
+      transform: translateY(-600%);
     }
     50% {
-      transform: translateY(50%); /* Midway, still sliding */
+      transform: translateY(50%); 
     }
     100% {
-      transform: translateY(0); /* End at the center */
+      transform: translateY(0); 
     }
   }
   
-  .animate-slideFromTop {
-    animation: slideFromTop 2s ease-out forwards; /* Forward ensures it stays in the center after sliding */
-  }
-  
+.animate-slideFromTop {
+    animation: slideFromTop 2s ease-out forwards; 
+}
