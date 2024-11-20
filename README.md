@@ -69,4 +69,4 @@ The app is live and hosted on Vercel. You can play it [here](https://higher-lowe
 ## 🔮 Future Improvements/Additions
 - **Multiplayer Mode**: Compete with friends in real-time.
 - **Global Leaderboard**: Compare your stats with others.
-- **Custome Themes**: Personalize the game's appearance.
+- **Custom Themes**: Personalize the game's appearance.
