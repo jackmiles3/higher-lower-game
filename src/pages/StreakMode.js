@@ -22,6 +22,7 @@ const StreakMode = () => {
   const [isFlipping, setIsFlipping] = useState(false); 
   const [showNextCard, setShowNextCard] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showNewHighScore, setShowNewHighScore] = useState(false);
 
   useEffect(() => {
     startGame();
@@ -47,6 +48,7 @@ const StreakMode = () => {
     setHiddenSuitCard(null);
     setIsFlipping(false);
     setShowNextCard(false);
+    setShowNewHighScore(false);
   };
 
   const updateStatistics = (streak) => {
@@ -56,8 +58,10 @@ const StreakMode = () => {
     const currentStats = stats[mode];
     currentStats.totalGames += 1;
     currentStats.streakSum += streak;
+
     if (streak > currentStats.highestStreak) {
       currentStats.highestStreak = streak;
+      setShowNewHighScore(true);
     }
   
     stats[mode] = currentStats;
@@ -258,7 +262,23 @@ const StreakMode = () => {
           </div>
         </div>
       )}
-  
+
+       {/* New High Score Overlay */}
+       {showNewHighScore && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-green-700 p-6 rounded shadow-lg text-white w-116 text-center">
+            <h2 className="text-4xl font-bold mb-4 text-yellow-400">New High Score!</h2>
+            <p className="text-lg">Congratulations on achieving a streak of {streak}!</p>
+            <button
+              className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded mt-6"
+              onClick={() => setShowNewHighScore(false)} 
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {currentCard && (suitGuessing ? hiddenSuitCard : nextCard) ? (
         <div className="mt-6">
           {gameOver ? (
