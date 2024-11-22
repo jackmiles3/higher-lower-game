@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaQuestionCircle, FaClock, FaChartLine } from 'react-icons/fa'; // Importing suitable icons
+import { FaQuestionCircle, FaClock, FaChartLine } from 'react-icons/fa'; 
 
 import '../styles.css'
 
@@ -11,6 +11,7 @@ const Home = () => {
     <div className="min-h-screen bg-green-800 flex items-center justify-center text-white relative">
       <div className="text-center">
 
+        {/* Title */}
         <h1 className="text-4xl font-bold mb-4">Higher/Lower Card Game</h1>
         <h2 className="text-xl font-semibold mb-8">by Jack Miles</h2>
         <p className="mb-6">Choose a game mode to start playing:</p>

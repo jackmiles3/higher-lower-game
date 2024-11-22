@@ -7,6 +7,7 @@ import '../styles.css'
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
 const StreakMode = () => {
+  // State Variables
   const [currentCard, setCurrentCard] = useState(null);
   const [nextCard, setNextCard] = useState(null);
   const [deck, setDeck] = useState([]);
@@ -36,6 +37,7 @@ const StreakMode = () => {
     }
   }, []);
 
+  // Start a new game
   const startGame = () => {
     const newDeck = createDeck();
     setDeck(newDeck);
@@ -51,6 +53,7 @@ const StreakMode = () => {
     setShowNewHighScore(false);
   };
 
+  // Update the game statistics
   const updateStatistics = (streak) => {
     const mode = hardMode ? 'hardMode' : 'easyMode';
     const stats = JSON.parse(localStorage.getItem('gameStats'));
@@ -68,6 +71,7 @@ const StreakMode = () => {
     localStorage.setItem('gameStats', JSON.stringify(stats));
   };
 
+  // Get the game statistics
   const getStatistics = (isHardMode = hardMode) => {
     const stats = JSON.parse(localStorage.getItem('gameStats'));
     const modeStats = isHardMode ? stats.hardMode : stats.easyMode;
@@ -84,6 +88,7 @@ const StreakMode = () => {
     };
   };
 
+  // Check if the guess is correct
   const isGuessCorrect = (guess) => {
     const cardOrder = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     const currentIndex = cardOrder.indexOf(currentCard.value);
@@ -100,6 +105,7 @@ const StreakMode = () => {
     return guess === 'higher' ? nextIndex > currentIndex : nextIndex < currentIndex;
   };
 
+  // Handle the user's guess
   const handleGuess = (guess) => {
     if (isGuessCorrect(guess)) {
       setIsFlipping(true);
@@ -134,6 +140,7 @@ const StreakMode = () => {
     }
   };
   
+  // Handle the user's suit guess
   const handleSuitGuess = (suit) => {
     if (suit === nextCard.suit) {
       setSuitGuessing(false); 
@@ -143,6 +150,7 @@ const StreakMode = () => {
     }
   };
 
+  // Advance the game to the next card
   const incrementStreakAndAdvance = () => {
     setStreak(streak + 1);
     setCurrentCard(nextCard);
@@ -157,12 +165,14 @@ const StreakMode = () => {
     }
   };
 
+  // End the game
   const endGame = () => {
     setLastCard(nextCard);
     setGameOver(true);
     updateStatistics(streak);
   };
   
+  // Handle the Home button click
   const handleHomeClick = () => {
     if (streak > 0) {
       setShowHomeConfirmation(true); 
@@ -171,10 +181,12 @@ const StreakMode = () => {
     }
   };
   
+  // Navigate to the Home page
   const navigateHome = () => {
     window.location.href = '/';
   };
 
+  // Render the Streak Mode component
   return (
     <div className="min-h-screen bg-green-800 flex flex-col items-center text-white relative">
       <h2 className="text-3xl font-bold mt-8">Streak Mode</h2>
@@ -279,6 +291,7 @@ const StreakMode = () => {
         </div>
       )}
 
+      {/* Game Content */}
       {currentCard && (suitGuessing ? hiddenSuitCard : nextCard) ? (
         <div className="mt-6">
           {gameOver ? (
@@ -298,6 +311,7 @@ const StreakMode = () => {
                 Play Again
               </button>
             </div>
+            /* Suit Guessing */
           ) : suitGuessing ? (
             <div className="text-center">
               <p className="text-xl mb-4">Guess the suit of the next card!</p>

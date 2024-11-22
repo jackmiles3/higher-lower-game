@@ -7,6 +7,7 @@ import '../styles.css'
 const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 
 const TimedMode = () => {
+  // State Variables
   const [currentCard, setCurrentCard] = useState(null);
   const [nextCard, setNextCard] = useState(null);
   const [deck, setDeck] = useState([]);
@@ -51,6 +52,7 @@ const TimedMode = () => {
     }
   }, []);
 
+  // Timer Logic
   useEffect(() => {
     if (gameActive && timeLeft > 0) {
       const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
@@ -61,6 +63,7 @@ const TimedMode = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, gameActive]);
 
+  // Game Logic
   const initializeDeck = () => {
     const newDeck = createDeck();
     setDeck(newDeck);
@@ -68,6 +71,7 @@ const TimedMode = () => {
     setNextCard(newDeck.pop());
   };
 
+  // Start a new game
   const startGame = (timeLimit) => {
     setHistory([]);
     setTimeLeft(timeLimit);
@@ -80,6 +84,7 @@ const TimedMode = () => {
     setShowTimeUp(false);
   };
 
+  // Update the statistics after the game ends
   const updateStatistics = (finalScore) => {
     const mode = hardMode ? 'hardMode' : 'easyMode';
     const stats = JSON.parse(localStorage.getItem('timedGameStats'));
@@ -97,6 +102,7 @@ const TimedMode = () => {
     localStorage.setItem('timedGameStats', JSON.stringify(stats));
   };
 
+  // Get the statistics for a specific time limit and mode
   const getStatistics = (timeLimit, isHardMode = hardMode) => {
     const stats = JSON.parse(localStorage.getItem('timedGameStats'));
     const modeStats = isHardMode ? stats[timeLimit].hardMode : stats[timeLimit].easyMode;
@@ -114,6 +120,7 @@ const TimedMode = () => {
   };
 
 
+  // Handle the user's guess
   const handleGuess = (guess) => {
     if (!gameActive || suitGuessing) return;
 
@@ -144,6 +151,7 @@ const TimedMode = () => {
     }
   };
 
+  // Handle the user's suit guess
   const handleSuitGuess = (suit) => {
     if (suit === nextCard.suit) {
       setScore((prevScore) => prevScore + 1);
@@ -154,11 +162,13 @@ const TimedMode = () => {
     }
   };
 
+  // Apply a time penalty for an incorrect guess
   const applyTimePenalty = () => {
     setTimeLeft((prev) => Math.max(prev - timePenalty, 0));
     setShowPenalty(true);
   };
 
+  // Check if the user's guess is correct
   const isGuessCorrect = (guess) => {
     const cardOrder = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     const currentIndex = cardOrder.indexOf(currentCard.value);
@@ -175,12 +185,14 @@ const TimedMode = () => {
     return guess === 'higher' ? nextIndex > currentIndex : nextIndex < currentIndex;
   };
 
+  // Advance the game to the next card
   const advanceGame = () => {
     setHistory([...history, currentCard]);
     setCurrentCard(nextCard);
     setNextCard(deck.pop());
   };
 
+  // End the game
   const endGame = () => {
     setGameActive(false);
     setShowPenalty(false);
@@ -193,6 +205,7 @@ const TimedMode = () => {
     }, 3000); 
   };
 
+  // Handle the Home button click
   const handleHomeClick = () => {
     if (timeLeft > 0) {
       setShowHomeConfirmation(true); 
@@ -201,11 +214,12 @@ const TimedMode = () => {
     }
   };
   
+  // Navigate to the home page
   const navigateHome = () => {
     window.location.href = '/';
   };
   
-
+  // Render the Timed Mode component
   return (
     <div className="min-h-screen bg-green-800 flex flex-col items-center text-white relative">
       <h2 className="text-3xl font-bold mt-8">Timed Mode</h2>
@@ -219,6 +233,7 @@ const TimedMode = () => {
         </div>
       )}
 
+      {/* Game Setup */}
       {!gameActive && !showTimeUp && (
         <div className="text-center">
           <p className="text-lg mb-4">Select your time limit:</p>
@@ -264,6 +279,7 @@ const TimedMode = () => {
         </div>
       ) : (
         <>
+        {/* Card Display */}
           <div className="flex justify-center items-center space-x-8 mt-6">
             {currentCard && (
               <img
@@ -291,6 +307,7 @@ const TimedMode = () => {
             </div>
           </div>
 
+          {/* Guess Buttons */}
           <div className="flex justify-center space-x-4 mt-4">
             <button
               className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded flex items-center justify-center transform active:scale-90 transition-transform duration-100"
@@ -308,6 +325,7 @@ const TimedMode = () => {
         </>
       )}
 
+      {/* History */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold">History</h3>
         <ul className="mt-4 bg-green-700 p-4 rounded w-80 flex flex-wrap gap-2">
@@ -327,6 +345,7 @@ const TimedMode = () => {
         </ul>
       </div>
 
+      {/* Options Button */}
       <button
         className="absolute top-4 right-4 text-white text-2xl"
         onClick={() => setShowOptions(!showOptions)}
@@ -334,6 +353,7 @@ const TimedMode = () => {
         <FaCog />
       </button>
 
+      {/* Options Overlay */}
       {showOptions && (
         <div className="absolute top-16 right-4 bg-green-700 p-4 rounded shadow-lg">
           <h3 className="text-lg font-bold mb-2">Options</h3>
@@ -401,6 +421,7 @@ const TimedMode = () => {
         </div>
       )}
 
+      {/* Home Button */}
       <button
         className="absolute top-4 left-4 flex items-center bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded space-x-2"
         onClick={handleHomeClick}>
@@ -410,6 +431,7 @@ const TimedMode = () => {
         <span>Home</span>
       </button>
 
+      {/* Home Confirmation Overlay */}
       {showHomeConfirmation && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-green-700 p-6 rounded shadow-lg text-center">
